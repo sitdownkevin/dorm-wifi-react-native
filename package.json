@@ -10,6 +10,7 @@
     "ios": "expo start -c --ios",
     "web": "expo start -c --web",
     "clean": "rm -rf .expo node_modules",
+    "prebuild": "npx expo prebuild --platform android",
     "build": "eas build --profile production --platform android --local",
     "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
   },

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "dorm-wifi-react-native",
+    "name": "DORM WIFI",
     "slug": "dorm-wifi-react-native",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "dorm-wifi",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
@@ -18,14 +18,14 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sitdownkevin.dormwifireactnative"
+      "bundleIdentifier": "com.sitdownkevin.dormwifi"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sitdownkevin.dormwifireactnative"
+      "package": "com.sitdownkevin.dormwifi"
     },
     "web": {
       "bundler": "metro",
