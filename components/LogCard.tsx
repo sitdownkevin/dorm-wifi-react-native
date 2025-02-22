@@ -25,17 +25,28 @@ export function LogCard({ config, online }: { config: Config, online: boolean })
     };
 
   return (
-    <Card className="w-full max-w-sm p-4">
+    <Card className="w-full max-w-sm p-4 border-gray-100">
       <CardHeader>
-        <Text className="text-xl font-sansSCBold">状态</Text>
+        <Text className="text-xl font-sansSCBold">Debug Log</Text>
       </CardHeader>
       <CardContent>
         <View className="flex flex-col gap-2">
-          <Text>{online ? "已连接" : "未连接"}</Text>
-          <Text>账号：{config.account}</Text>
-          <Text>密码：{config.password}</Text>
-          <Text>域名：{config.hostUrl}</Text>
-          <Text>运营商：{config.networkType}</Text>
+          <View className="flex flex-row justify-between">
+            <Text className="font-bold">账号</Text>
+            <Text>{config.account}</Text>
+          </View>
+          <View className="flex flex-row justify-between">
+            <Text className="font-bold">密码</Text>
+            <Text>{config.password}</Text>
+          </View>
+          <View className="flex flex-row justify-between">
+            <Text className="font-bold">域名</Text>
+            <Text>{config.hostUrl}</Text>
+          </View>
+          <View className="flex flex-row justify-between">
+            <Text className="font-bold">运营商</Text>
+            <Text>{config.networkType}</Text>
+          </View>
         </View>
       </CardContent>
       <CardFooter>

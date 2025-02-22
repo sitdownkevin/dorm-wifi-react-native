@@ -75,6 +75,7 @@ export default function RootLayout() {
               fontFamily: "NotoSansSC-Thin",
             },
             headerRight: () => <ThemeToggle />,
+            headerShadowVisible: false,
           }}
         />
       </Stack>

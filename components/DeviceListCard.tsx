@@ -23,20 +23,25 @@ export function DeviceListCard() {
   const handleRefresh = () => {
     setLoading(true);
     setTimeout(() => {
+      const randomMac = Array(6).fill(0).map(() => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
+      const randomIp = `192.168.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
+      const randomUpload = Math.floor(Math.random() * 1000).toString();
+      const randomDownload = Math.floor(Math.random() * 1000).toString();
+      
       setDeviceInformation([
         {
-          mac: "00:00:00:00:00:00",
-          ip: "192.168.2.139",
-          upload: "100",
-          download: "100",
+          mac: randomMac,
+          ip: randomIp, 
+          upload: randomUpload,
+          download: randomDownload,
         },
       ]);
       setLoading(false);
-    }, 2000);
+    }, Math.random() * 1000);
   };
 
   return (
-    <Card className="w-full max-w-sm p-4">
+    <Card className="w-full max-w-sm p-4 border-gray-100">
       <CardHeader>
         <Text className="text-xl font-sansSCBold">设备列表</Text>
       </CardHeader>
