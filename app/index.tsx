@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState, useEffect } from "react";
 import { View, ScrollView } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -8,6 +9,7 @@ import { Text } from "~/components/ui/text";
 import { ConnectCard } from "~/components/ConnectCard";
 import { LogCard } from "~/components/LogCard";
 import { DeviceListCard } from "~/components/DeviceListCard";
+import { getStatus } from "~/lib/network/getStatus";
 
 function AuthorInfo() {
   return (
@@ -20,9 +22,9 @@ function AuthorInfo() {
 }
 
 export default function Screen() {
-  const [online, setOnline] = React.useState(true);
-  const [config, setConfig] = React.useState<Config>({
-    hostUrl: "",
+  const [online, setOnline] = useState<boolean>(true);
+  const [config, setConfig] = useState<Config>({
+    hostUrl: "172.21.0.54",
     account: "",
     password: "",
     networkType: 0,
@@ -48,11 +50,20 @@ export default function Screen() {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     getConfig();
+
+    setInterval(async () => {
+      const status = await getStatus(config);
+      if (status.success) {
+        setOnline(true);
+      } else {
+        setOnline(false);
+      }
+    }, 60000);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     storeConfig();
   }, [config]);
 

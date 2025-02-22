@@ -23,14 +23,14 @@ import {
 
 import { Config } from "~/lib/types";
 import { useState } from "react";
-
-
+import { connect } from "~/lib/network/connect";
+import { disconnect } from "~/lib/network/disconnect";
 
 const networkTypeLabels = {
   0: '校园网',
-  1: '中国移动',
-  2: '中国联通',
-  3: '中国电信',
+  2: '中国移动',
+  3: '中国联通',
+  4: '中国电信',
 }
 
 
@@ -71,24 +71,32 @@ export function ConnectCard({
     left: 60,
     right: 60,
   };
-  const handleConnect = () => {
+  const handleConnect = async () => {
+    setConnecting(true);
+
     if (online) {
-      setConnecting(true);
       setMessage("断开连接中...");
-      setTimeout(() => {
-        setConnecting(false);
+      const result = await disconnect(config);
+      if (result.success) {
         setOnline(false);
         setMessage(undefined);
-      }, 1000);
+      } else {
+        // setOnline(true);
+        setMessage(result.message);
+      }
     } else {
-      setConnecting(true);
       setMessage("连接中...");
-      setTimeout(() => {
-        setConnecting(false);
+      const result = await connect(config);
+      
+      if (result.success) {
         setOnline(true);
         setMessage(undefined);
-      }, 1000);
+      } else {
+        setMessage(result.message);
+      }
     }
+
+    setConnecting(false);
   };
 
   return (
@@ -132,9 +140,9 @@ export function ConnectCard({
             <SelectContent insets={contentInsets} className="w-full">
               <SelectGroup className="w-full">
                 <SelectItem value="0" label={networkTypeLabels[0]} />
-                <SelectItem value="1" label={networkTypeLabels[1]} />
                 <SelectItem value="2" label={networkTypeLabels[2]} />
                 <SelectItem value="3" label={networkTypeLabels[3]} />
+                <SelectItem value="4" label={networkTypeLabels[4]} />
               </SelectGroup>
             </SelectContent>
           </Select>

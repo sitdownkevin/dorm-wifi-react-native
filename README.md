@@ -6,9 +6,13 @@ React Native App for TJ Dorm Wifi
 
 ```shell
 yarn
+```
 
+```shell
 yarn install
+```
 
+```shell
 yarn android
 ```
 
@@ -16,6 +20,8 @@ yarn android
 
 ```shell
 npx expo prebuild
+```
 
+```shell
 yarn build
 ```
