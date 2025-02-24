@@ -10,34 +10,25 @@ import {
   CardTitle,
 } from "~/components/ui/card";
 
-import { DeviceInformation } from "~/lib/types";
+import { DeviceInfo, Config } from "~/lib/types";
+import { getDeviceInformationByAccount } from "~/lib/network/getDeviceInformationByAccount";
 import { useState } from "react";
 
-export function DeviceListCard() {
+export function DeviceListCard({ config }: { config: Config }) {
 
     const [loading, setLoading] = useState(false);
-  const [deviceInformation, setDeviceInformation] = useState<
-    Array<DeviceInformation>
+  const [DeviceInfo, setDeviceInfo] = useState<
+    Array<DeviceInfo>
   >([]);
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setLoading(true);
-    setTimeout(() => {
-      const randomMac = Array(6).fill(0).map(() => Math.floor(Math.random() * 256).toString(16).padStart(2, '0')).join(':');
-      const randomIp = `192.168.${Math.floor(Math.random() * 256)}.${Math.floor(Math.random() * 256)}`;
-      const randomUpload = Math.floor(Math.random() * 1000).toString();
-      const randomDownload = Math.floor(Math.random() * 1000).toString();
-      
-      setDeviceInformation([
-        {
-          mac: randomMac,
-          ip: randomIp, 
-          upload: randomUpload,
-          download: randomDownload,
-        },
-      ]);
-      setLoading(false);
-    }, Math.random() * 1000);
+
+    const deviceInfo = await getDeviceInformationByAccount(config);
+
+    setDeviceInfo(deviceInfo);
+
+    setLoading(false);
   };
 
   return (
@@ -47,7 +38,7 @@ export function DeviceListCard() {
       </CardHeader>
       <CardContent>
         <View className="flex flex-col gap-8">
-          {deviceInformation.map((device, index) => {
+          {DeviceInfo.map((device, index) => {
             return (
               <View key={index} className="flex flex flex-col">
                 <View className="flex flex-row items-center justify-between">
@@ -59,11 +50,21 @@ export function DeviceListCard() {
                   <Text>{device.ip}</Text>
                 </View>
                 <View className="flex flex-row items-center justify-between">
-                  <Text className="font-bold">上行/下行</Text>
+                  <Text className="font-bold">上行/下行 (Mb)</Text>
                   <Text>
-                    {device.upload}/{device.download}
+                    {device.upload.toFixed(2)}/{device.download.toFixed(2)}
                   </Text>
                 </View>
+                <View className="flex flex-row items-center justify-between">
+                  <Text className="font-bold">登录时间</Text>
+                  <Text>{device.time}</Text>
+                </View>
+                {device.account && (
+                  <View className="flex flex-row items-center justify-between">
+                    <Text className="font-bold">登录账号</Text>
+                    <Text>{device.account}</Text>
+                  </View>
+                )}
               </View>
             );
           })}

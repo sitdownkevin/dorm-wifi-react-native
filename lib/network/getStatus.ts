@@ -6,6 +6,9 @@ type Status = {
     username: string;
 }
 
+
+
+
 export async function getStatus(config: Config): Promise<Status> {
     const url = `http://${config.hostUrl}/drcom/get_online_info`;
 

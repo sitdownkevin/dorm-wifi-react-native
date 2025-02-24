@@ -76,7 +76,7 @@ export default function Screen() {
           online={online}
           setOnline={setOnline}
         />
-        <DeviceListCard />
+        <DeviceListCard config={config} />
         <LogCard config={config} online={online} />
         <AuthorInfo />
       </View>
