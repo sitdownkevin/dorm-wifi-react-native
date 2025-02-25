@@ -9,7 +9,8 @@ import { Text } from "~/components/ui/text";
 import { ConnectCard } from "~/components/ConnectCard";
 import { LogCard } from "~/components/LogCard";
 import { DeviceListCard } from "~/components/DeviceListCard";
-import { getStatus } from "~/lib/network/getStatus";
+import { Button } from "~/components/ui/button";
+import { getStatus, Status, UserInfo } from "~/lib/network/getStatus";
 
 function AuthorInfo() {
   return (
@@ -22,6 +23,7 @@ function AuthorInfo() {
 }
 
 export default function Screen() {
+  const [userInfo, setUserInfo] = useState<UserInfo | undefined>();
   const [online, setOnline] = useState<boolean>(true);
   const [config, setConfig] = useState<Config>({
     hostUrl: "172.21.0.54",
@@ -29,6 +31,8 @@ export default function Screen() {
     password: "",
     networkType: 0,
   });
+
+
 
   const storeConfig = async () => {
     try {
@@ -50,26 +54,48 @@ export default function Screen() {
     }
   };
 
-  useEffect(() => {
-    getConfig();
-
-    setInterval(async () => {
-      const status = await getStatus(config);
+  const fuckStatus = async () => {
+      const status: Status = await getStatus(config);
       if (status.success) {
         setOnline(true);
+        setUserInfo(status.userInfo);
       } else {
         setOnline(false);
+        setUserInfo(undefined);
       }
-    }, 60000);
+  }
+
+  useEffect(() => {
+    getConfig();
+    fuckStatus();
+    
+    // setInterval(async () => {
+    //   fuckStatus();
+    // }, 60000);
+
   }, []);
 
   useEffect(() => {
     storeConfig();
   }, [config]);
 
+
+  useEffect(() => {
+    fuckStatus();
+  }, [online]);
+
   return (
     <ScrollView>
       <View className="flex flex-col items-center py-6 px-5 gap-4">
+        {
+          userInfo && (
+            <View className="flex flex-col items-center gap-2">
+              <Text className="text-xs text-gray-500 font-sansSCThin">您好 {userInfo?.name}</Text>
+              <Text className="text-xs text-gray-500 font-sansSCThin">{userInfo?.account} - {userInfo?.ip}</Text>
+            </View>
+          )
+        }
+
         <ConnectCard
           config={config}
           setConfig={setConfig}

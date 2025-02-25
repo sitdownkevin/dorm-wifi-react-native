@@ -31,6 +31,7 @@ export function LogCard({ config, online }: { config: Config, online: boolean })
       </CardHeader>
       <CardContent>
         <View className="flex flex-col gap-2">
+          <Text>{online ? 'online': 'offline'}</Text>
           <View className="flex flex-row justify-between">
             <Text className="font-bold">账号</Text>
             <Text>{config.account}</Text>

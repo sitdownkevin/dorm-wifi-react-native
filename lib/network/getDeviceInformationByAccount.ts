@@ -1,25 +1,35 @@
 import axios, { AxiosError } from "axios";
 import { Config, DeviceInfoRaw, DeviceInfo } from "~/lib/types";
 
+export type DeviceInformationResult = {
+  success: boolean;
+  data?: DeviceInfo[];
+  message?: string;
+};
+
 export async function getDeviceInformationByAccount(
   config: Config
-): Promise<DeviceInfo[]> {
+): Promise<DeviceInformationResult> {
   const url: string = `http://${config.hostUrl}:801/eportal/portal/mac/find?callback=dr1002&user_account=${config.account}`;
 
   try {
     const response = await axios.get(url, {
       timeout: 5000,
     });
-
     if (response.status === 200) {
-      //   console.log(response.data);
+      if (process.env.NODE_ENV === "development") {
+        console.log(response.data);
+      }
 
       const match = response.data.match(/dr1002\s*\((.*)\)\s*;?/);
 
       try {
         const jsonData = JSON.parse(match[1]);
         const deviceInfoListRaw: DeviceInfoRaw[] = jsonData["list"];
-        // console.log(deviceInfoListRaw);
+
+        if (process.env.NODE_ENV === "development") {
+          console.log(deviceInfoListRaw);
+        }
 
         const data: DeviceInfo[] = deviceInfoListRaw.map((item) => {
           const formattedMac =
@@ -36,7 +46,10 @@ export async function getDeviceInformationByAccount(
           };
         });
 
-        return data;
+        return {
+          success: true,
+          data,
+        };
       } catch (error) {
         throw new Error("Error-Invalid JSON");
       }
@@ -45,64 +58,29 @@ export async function getDeviceInformationByAccount(
     }
   } catch (error) {
     if (error instanceof AxiosError && error.message === "Network Error") {
-      console.log("网络错误");
+      return {
+        success: false,
+        message: "请检查 URL 是否正确",
+      };
     }
 
     if (error instanceof Error && error.message === "Error-Timeout") {
-      console.log("请求超时");
+      return {
+        success: false,
+        message: "请求超时",
+      };
     }
 
     if (error instanceof Error && error.message === "Error-Invalid JSON") {
-      console.log("不是合法的 JSON");
+      return {
+        success: false,
+        message: "没有找到设备",
+      };
     }
 
-    console.log(error);
+    return {
+      success: false,
+      message: "未知错误",
+    };
   }
-
-  //   const fakeDeviceInformationList: DeviceInfoRaw[] = [
-  //     {
-  //       online_session: 14454,
-  //       online_time: "2025-02-23 16:13:00",
-  //       online_ip: "100.76.203.210",
-  //       online_mac: "8ce9ee81977d",
-  //       time_long: "113202",
-  //       uplink_bytes: "19920314",
-  //       downlink_bytes: "871927768",
-  //       dhcp_host: "",
-  //       device_alias: "",
-  //       nas_ip: "0",
-  //       user_account: "2431181",
-  //       is_owner_ip: "0",
-  //     },
-  //     {
-  //       online_session: 14523,
-  //       online_time: "2025-02-23 16:57:47",
-  //       online_ip: "100.76.149.234",
-  //       online_mac: "f6d197b3ff3e",
-  //       time_long: "110515",
-  //       uplink_bytes: "100949",
-  //       downlink_bytes: "688286",
-  //       dhcp_host: "",
-  //       device_alias: "",
-  //       nas_ip: "0",
-  //       user_account: "2431181",
-  //       is_owner_ip: "0",
-  //     },
-  //     {
-  //       online_session: 16681,
-  //       online_time: "2025-02-24 23:39:02",
-  //       online_ip: "100.76.241.47",
-  //       online_mac: "a655aae8cfd0",
-  //       time_long: "40",
-  //       uplink_bytes: "429",
-  //       downlink_bytes: "169",
-  //       dhcp_host: "",
-  //       device_alias: "",
-  //       is_owner_ip: "0",
-  //     },
-  //   ];
-
-  //   console.log(fakeDeviceInformationList);
-
-  return [];
 }

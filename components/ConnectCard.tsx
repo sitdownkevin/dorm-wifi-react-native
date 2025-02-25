@@ -23,33 +23,35 @@ import {
 
 import { Config } from "~/lib/types";
 import { useState } from "react";
-import { connect } from "~/lib/network/connect";
-import { disconnect } from "~/lib/network/disconnect";
+import { connect, ConnectResult } from "~/lib/network/connect";
+import { disconnect, DisconnectResult } from "~/lib/network/disconnect";
 
 const networkTypeLabels = {
-  0: '校园网',
-  2: '中国移动',
-  3: '中国联通',
-  4: '中国电信',
-}
+  0: "校园网",
+  2: "中国移动",
+  3: "中国联通",
+  4: "中国电信",
+};
 
-
-function messageElement({ online, message }: { online: boolean, message?: string }) {
+function messageElement({
+  online,
+  message,
+}: {
+  online: boolean;
+  message?: string;
+}) {
   if (message) {
     return (
-      <CardDescription className={"text-gray-500"}>
-        {message}
-      </CardDescription>
-    )
+      <CardDescription className={"text-gray-500"}>{message}</CardDescription>
+    );
   }
 
   return (
     <CardDescription className={online ? "text-green-500" : "text-red-500"}>
       {online ? "已连接" : "未连接"}
     </CardDescription>
-  )
+  );
 }
-
 
 export function ConnectCard({
   config,
@@ -64,6 +66,7 @@ export function ConnectCard({
 }) {
   const [connecting, setConnecting] = useState(false);
   const [message, setMessage] = useState<string | undefined>(undefined);
+
   const insets = useSafeAreaInsets();
   const contentInsets = {
     top: insets.top,
@@ -71,12 +74,14 @@ export function ConnectCard({
     left: 60,
     right: 60,
   };
+
+
   const handleConnect = async () => {
     setConnecting(true);
 
     if (online) {
       setMessage("断开连接中...");
-      const result = await disconnect(config);
+      const result: DisconnectResult = await disconnect(config);
       if (result.success) {
         setOnline(false);
         setMessage(undefined);
@@ -86,8 +91,8 @@ export function ConnectCard({
       }
     } else {
       setMessage("连接中...");
-      const result = await connect(config);
-      
+      const result: ConnectResult = await connect(config);
+
       if (result.success) {
         setOnline(true);
         setMessage(undefined);
@@ -124,10 +129,14 @@ export function ConnectCard({
             onChangeText={(text) => setConfig({ ...config, password: text })}
           />
           <Select
-            value={
-              { value: String(config.networkType), label: networkTypeLabels[config.networkType as keyof typeof networkTypeLabels] }
-            }
-            onValueChange={(item,) =>
+            value={{
+              value: String(config.networkType),
+              label:
+                networkTypeLabels[
+                  config.networkType as keyof typeof networkTypeLabels
+                ],
+            }}
+            onValueChange={(item) =>
               setConfig({
                 ...config,
                 networkType: parseInt(item?.value || "0"),

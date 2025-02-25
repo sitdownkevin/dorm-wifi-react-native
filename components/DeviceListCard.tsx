@@ -14,19 +14,33 @@ import { DeviceInfo, Config } from "~/lib/types";
 import { getDeviceInformationByAccount } from "~/lib/network/getDeviceInformationByAccount";
 import { useState } from "react";
 
-export function DeviceListCard({ config }: { config: Config }) {
+function messageElement({ message }: { message: string | undefined }) {
+  if (message) {
+    return (
+      <CardDescription className={"text-gray-500"}>{message}</CardDescription>
+    );
+  }
 
-    const [loading, setLoading] = useState(false);
-  const [DeviceInfo, setDeviceInfo] = useState<
-    Array<DeviceInfo>
-  >([]);
+  return null;
+}
+
+export function DeviceListCard({ config }: { config: Config }) {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | undefined>(undefined);
+  const [DeviceInfo, setDeviceInfo] = useState<Array<DeviceInfo>>([]);
 
   const handleRefresh = async () => {
     setLoading(true);
+    setDeviceInfo([]);
 
-    const deviceInfo = await getDeviceInformationByAccount(config);
+    const response = await getDeviceInformationByAccount(config);
 
-    setDeviceInfo(deviceInfo);
+    if (response.success) {
+      setMessage(undefined);
+      setDeviceInfo(response.data);
+    } else {
+      setMessage(response.message);
+    }
 
     setLoading(false);
   };
@@ -35,6 +49,7 @@ export function DeviceListCard({ config }: { config: Config }) {
     <Card className="w-full max-w-sm p-4 border-gray-100">
       <CardHeader>
         <Text className="text-xl font-sansSCBold">设备列表</Text>
+        {messageElement({ message })}
       </CardHeader>
       <CardContent>
         <View className="flex flex-col gap-8">
@@ -71,7 +86,12 @@ export function DeviceListCard({ config }: { config: Config }) {
         </View>
       </CardContent>
       <CardFooter>
-        <Button className="w-full" variant="outline" onPress={handleRefresh} disabled={loading}>
+        <Button
+          className="w-full"
+          variant="outline"
+          onPress={handleRefresh}
+          disabled={loading}
+        >
           <Text>{loading ? "刷新中" : "刷新"}</Text>
         </Button>
       </CardFooter>
