@@ -103,7 +103,7 @@ export default function Screen() {
           setOnline={setOnline}
         />
         <DeviceListCard config={config} />
-        <LogCard config={config} online={online} />
+        {/* <LogCard config={config} online={online} /> */}
         <AuthorInfo />
       </View>
     </ScrollView>

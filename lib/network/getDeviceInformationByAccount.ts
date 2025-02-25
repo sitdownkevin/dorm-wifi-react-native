@@ -15,6 +15,9 @@ export async function getDeviceInformationByAccount(
   try {
     const response = await axios.get(url, {
       timeout: 5000,
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      },
     });
     if (response.status === 200) {
       if (process.env.NODE_ENV === "development") {
@@ -60,7 +63,7 @@ export async function getDeviceInformationByAccount(
     if (error instanceof AxiosError && error.message === "Network Error") {
       return {
         success: false,
-        message: "请检查 URL 是否正确",
+        message: error.request._response,
       };
     }
 
